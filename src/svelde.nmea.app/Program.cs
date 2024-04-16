@@ -16,18 +16,20 @@ namespace svelde.nmea.app
 
     public static void Main(string[] args)
     {
+      // get port from command line or use default (COM7)
+      var port = args.Length == 1 ? args[0] : "COM7";
+      
       var utc = DateTime.UtcNow;
       var fileName = $"{utc.Year}-{utc.Month}-{utc.Day}={utc.Hour}-{utc.Minute}-{utc.Second}.log";
       _streamWriter = File.AppendText(fileName);
 
-      Console.WriteLine("Read serial port");
+      Console.WriteLine($"Read serial port: {port}");
 
       _parser = new NmeaParser();
 
       _parser.NmeaMessageParsed += NmeaMessageParsed;
 
-      // TODO   support passing in port from command line
-      _serialReader = new SerialReader();
+      _serialReader = new SerialReader(args[0]);
 
       _serialReader.NmeaSentenceReceived += NmeaSentenceReceived;
 
