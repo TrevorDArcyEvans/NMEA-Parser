@@ -1,6 +1,13 @@
-# nmeaparser
+# NMEA Parser
 
-Parser for NMEA messages. Currently parses GSV, GGA, GSA, GLL, GMC, VTG and TXT
+Parser for NMEA messages. Currently parses:
+* GSV
+* GGA
+* GSA
+* GLL
+* GMC
+* VTG
+* TXT
 
 ## Usage
 
@@ -32,7 +39,7 @@ If you have multiple NMEA devices please check out the 'NmeaParserList' class. T
 
 ## Why events?
 
-The event is used because some NMEA messages are splitted up in multiple sentences like GSA and GSV.
+The event is used because some NMEA messages are split up in multiple sentences like GSA and GSV.
 
 For these messages, the result is buffered. Once the complete message is made available, the event is raised.
 
@@ -48,7 +55,7 @@ For testing purposes, a reader for serial ports is added in the test application
 
 ### System.IO.Ports
 
-The example app only supports Windows due to the usage of the System.IO.Ports library. 
+The example app supports now Windows and Linux.
 
 ## NuGet
 
@@ -65,12 +72,6 @@ The following devices are used to test the parser:
 * GSpace GS-R238 GPS mouse (SiRFstarIII)
 
 *Note: If you want to have your GPS device tested and officially supported here, please send me a DM on github or twitter @svelde*
-
-## Azure IoT Edge
-
-This code is used in the Azure IoT Edge module [iot-edge-nmea](https://github.com/sandervandevelde/iot-edge-nmea).
-
-You can check it out on [Docker Hub](https://cloud.docker.com/repository/docker/svelde/iot-edge-nmea).
 
 ## Contribute
 
