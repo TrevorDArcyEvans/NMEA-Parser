@@ -8,8 +8,6 @@ namespace svelde.nmea.app
 {
   public class Program : IDisposable
   {
-    private static DateTime _lastSent;
-
     private static NmeaParser _parser;
 
     private static StreamWriter _streamWriter;
@@ -18,8 +16,6 @@ namespace svelde.nmea.app
 
     public static void Main(string[] args)
     {
-      _lastSent = DateTime.Now;
-
       var utc = DateTime.UtcNow;
       var fileName = $"{utc.Year}-{utc.Month}-{utc.Day}={utc.Hour}-{utc.Minute}-{utc.Second}.log";
       _streamWriter = File.AppendText(fileName);
@@ -51,8 +47,8 @@ namespace svelde.nmea.app
         {typeof(GngllMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GngsaMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GpgsaMessage), () => { Console.WriteLine($"{e}"); }},
-        {typeof(GnrmcMessage), () => { SendMessage(e); }},
-        {typeof(GprmcMessage), () => { SendMessage(e); }},
+        {typeof(GnrmcMessage), () => { Console.WriteLine($"{e}"); }},
+        {typeof(GprmcMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GntxtMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GnvtgMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GpvtgMessage), () => { Console.WriteLine($"{e}"); }},
@@ -62,48 +58,6 @@ namespace svelde.nmea.app
       };
 
       @switch[e.GetType()]();
-    }
-
-    private static void SendMessage(NmeaMessage e)
-    {
-      Console.WriteLine($"{e}");
-
-      if (_lastSent >= DateTime.Now.AddSeconds(-10))
-      {
-        return;
-      }
-
-      try
-      {
-        if (!(e is GnrmcMessage)
-            || !(e as GnrmcMessage).ModeIndicator.IsValid())
-        {
-          Console.WriteLine($"*** Invalid fix '{(e as GngllMessage)?.ModeIndicator}'; no location sent");
-          return;
-        }
-
-        _lastSent = DateTime.Now;
-
-        var telemetry = new Telemetry
-        {
-          Location = new TelemetryLocation
-          {
-            Latitude = (e as GnrmcMessage).Latitude.ToDecimalDegrees(),
-            Longitude = (e as GnrmcMessage).Longitude.ToDecimalDegrees(),
-          },
-          FixTaken = (e as GnrmcMessage).TimeOfFix,
-          ModeIndicator = (e as GnrmcMessage).ModeIndicator,
-        };
-
-        var json = JsonConvert.SerializeObject(telemetry);
-
-        // TODO     SendMessage
-        // var message = new Message(Encoding.ASCII.GetBytes(json));
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"Exception during IoT communication {ex}");
-      }
     }
 
     private static void NmeaSentenceReceived(object sender, NmeaSentence e)
