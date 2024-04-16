@@ -8,21 +8,21 @@ using System.Text;
 
 namespace svelde.nmea.app
 {
-    class Program : IDisposable
+    public class Program : IDisposable
     {
-        private static DateTime _LastSent;
+        private static DateTime _lastSent;
 
         private static NmeaParser _parser;
 
         private static StreamWriter _streamWriter;
 
-        private static DeviceClient _deviceClient = null;
+        private static DeviceClient _deviceClient;
 
-        private static SerialReader _SerialReader = null;
+        private static SerialReader _serialReader;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            _LastSent = DateTime.Now;
+            _lastSent = DateTime.Now;
 
             var utc = DateTime.UtcNow;
             var fileName = $"{utc.Year}-{utc.Month}-{utc.Day}={utc.Hour}-{utc.Minute}-{utc.Second}.log";
@@ -46,11 +46,11 @@ namespace svelde.nmea.app
 
             _parser.NmeaMessageParsed += NmeaMessageParsed;
 
-            _SerialReader = new SerialReader();
+            _serialReader = new SerialReader();
 
-            _SerialReader.NmeaSentenceReceived += NmeaSentenceReceived;
+            _serialReader.NmeaSentenceReceived += NmeaSentenceReceived;
 
-            _SerialReader.Open();
+            _serialReader.Open();
 
             Console.WriteLine("Initialized...");
 
@@ -87,7 +87,7 @@ namespace svelde.nmea.app
                 return;
             }
 
-            if (_LastSent >= DateTime.Now.AddSeconds(-10))
+            if (_lastSent >= DateTime.Now.AddSeconds(-10))
             {
                 return;
             }
@@ -97,11 +97,11 @@ namespace svelde.nmea.app
                 if (!(e is GnrmcMessage) 
                        || !(e as GnrmcMessage).ModeIndicator.IsValid())
                 {
-                    Console.WriteLine($"*** Invalid fix '{(e as GngllMessage).ModeIndicator}'; no location sent");
+                    Console.WriteLine($"*** Invalid fix '{(e as GngllMessage)?.ModeIndicator}'; no location sent");
                     return;
                 }
 
-                _LastSent = DateTime.Now;
+                _lastSent = DateTime.Now;
 
                 var telemetry = new Telemetry
                 {
@@ -114,7 +114,7 @@ namespace svelde.nmea.app
                     ModeIndicator = (e as GnrmcMessage).ModeIndicator,
                 };
 
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(telemetry);
+                var json = JsonConvert.SerializeObject(telemetry);
 
                 var message = new Message(Encoding.ASCII.GetBytes(json));
 
@@ -135,8 +135,7 @@ namespace svelde.nmea.app
 
         public void Dispose()
         {
-            if (_SerialReader != null)
-                _SerialReader.Dispose();
+            _serialReader?.Dispose();
         }
     }
 
