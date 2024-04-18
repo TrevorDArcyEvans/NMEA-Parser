@@ -8,7 +8,7 @@ namespace svelde.nmea.parser
     {
         public GsvMessage()
         {
-            Satelites = new List<Satelite>();
+            Satellites = new List<Satellite>();
         }
 
         [JsonProperty(PropertyName = "numberOfSentences")]
@@ -17,11 +17,11 @@ namespace svelde.nmea.parser
         [JsonProperty(PropertyName = "sentenceNr")]
         public int SentenceNr { get; private set; }
 
-        [JsonProperty(PropertyName = "numberOfSatelitesInView")]
-        public int NumberOfSatelitesInView { get; private set; }
+        [JsonProperty(PropertyName = "numberOfSatellitesInView")]
+        public int NumberOfSatellitesInView { get; private set; }
 
-        [JsonProperty(PropertyName = "satelites")]
-        public List<Satelite> Satelites { get; private set; }
+        [JsonProperty(PropertyName = "satellites")]
+        public List<Satellite> Satellites { get; private set; }
 
         public override void Parse(string nmeaLine)
         {
@@ -48,19 +48,19 @@ namespace svelde.nmea.parser
 
             NumberOfSentences = Convert.ToInt32(items[0]);
             SentenceNr = Convert.ToInt32(items[1]);
-            NumberOfSatelitesInView = Convert.ToInt32(items[2]);
+            NumberOfSatellitesInView = Convert.ToInt32(items[2]);
 
-            var sateliteCount = GetSateliteCount(
-                Convert.ToInt32(NumberOfSatelitesInView),
+            var satelliteCount = GetSatelliteCount(
+                Convert.ToInt32(NumberOfSatellitesInView),
                 Convert.ToInt32(NumberOfSentences),
                 Convert.ToInt32(SentenceNr));
 
-            for (int i = 0; i < sateliteCount; i++)
+            for (int i = 0; i < satelliteCount; i++)
             {
-                Satelites.Add(
-                    new Satelite
+                Satellites.Add(
+                    new Satellite
                     {
-                        SatelitePrnNumber = items[3 + (i * 4) + 0],
+                        SatellitePrnNumber = items[3 + (i * 4) + 0],
                         ElevationDegrees = items[3 + (i * 4) + 1],
                         AzimuthDegrees = items[3 + (i * 4) + 2],
                         SignalStrength = items[3 + (i * 4) + 3],
@@ -71,7 +71,7 @@ namespace svelde.nmea.parser
             {
                 OnNmeaMessageParsed(this);
 
-                Satelites.Clear();
+                Satellites.Clear();
             }
         }
 
@@ -80,7 +80,7 @@ namespace svelde.nmea.parser
             base.OnNmeaMessageParsed(e);
         }
 
-        private int GetSateliteCount(int numberOfSatelitesInView, int numberOfSentences, int sentenceNr)
+        private int GetSatelliteCount(int numberOfSatellitesInView, int numberOfSentences, int sentenceNr)
         {
             if (numberOfSentences != sentenceNr)
             {
@@ -88,17 +88,17 @@ namespace svelde.nmea.parser
             }
             else
             {
-                return numberOfSatelitesInView - ((sentenceNr - 1) * 4);
+                return numberOfSatellitesInView - ((sentenceNr - 1) * 4);
             }
         }
 
         public override string ToString()
         {
-            var result = $"{Type}-{Port} InView:{NumberOfSatelitesInView} ";
+            var result = $"{Type}-{Port} InView:{NumberOfSatellitesInView} ";
 
-            foreach(var s in Satelites)
+            foreach(var s in Satellites)
             {
-                result += $"{s.SatelitePrnNumber}: Azi={s.AzimuthDegrees}° Ele={s.ElevationDegrees}° Str={s.SignalStrength}; ";
+                result += $"{s.SatellitePrnNumber}: Azi={s.AzimuthDegrees}° Ele={s.ElevationDegrees}° Str={s.SignalStrength}; ";
             }
 
             return result; 

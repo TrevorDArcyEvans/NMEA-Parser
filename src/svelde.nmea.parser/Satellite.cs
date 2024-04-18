@@ -1,8 +1,8 @@
 ﻿namespace svelde.nmea.parser
 {
-    public class Satelite
+    public class Satellite
     {
-        public string SatelitePrnNumber { get; set; }
+        public string SatellitePrnNumber { get; set; }
         public string ElevationDegrees { get; set; }
         public string AzimuthDegrees { get; set; }
         public string SignalStrength { get; set; }
