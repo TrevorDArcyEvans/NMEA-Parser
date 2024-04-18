@@ -47,6 +47,7 @@ namespace svelde.nmea.app
         {typeof(GnggaMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GpggaMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GngllMessage), () => { Console.WriteLine($"{e}"); }},
+        {typeof(GpgllMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GngsaMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GpgsaMessage), () => { Console.WriteLine($"{e}"); }},
         {typeof(GnrmcMessage), () => { Console.WriteLine($"{e}"); }},

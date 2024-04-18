@@ -18,103 +18,110 @@ namespace svelde.nmea.parser
             UpdateFilter(filter);
         }
 
-        public void UpdateFilter(string filter)
+        private void UpdateFilter(string filter)
         {
             _parsers = new Dictionary<string, NmeaMessage>();
 
             var gngga = new GnggaMessage();
             if (!filter.ToUpper().Contains(gngga.Type))
             {
-                gngga.NmeaMessageParsed += messageParsed;
+                gngga.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gngga.Type}", gngga);
             }
 
             var gpgga = new GpggaMessage();
             if (!filter.ToUpper().Contains(gpgga.Type))
             {
-                gpgga.NmeaMessageParsed += messageParsed;
+                gpgga.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gpgga.Type}", gpgga);
             }
 
             var gngll = new GngllMessage();
             if (!filter.ToUpper().Contains(gngll.Type))
             {
-                gngll.NmeaMessageParsed += messageParsed;
+                gngll.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gngll.Type}", gngll);
+            }
+
+            var gpgll = new GpgllMessage();
+            if (!filter.ToUpper().Contains(gpgll.Type))
+            {
+                gpgll.NmeaMessageParsed += MessageParsed;
+                _parsers.Add($"${gpgll.Type}", gpgll);
             }
 
             var gngsa = new GngsaMessage();
             if (!filter.ToUpper().Contains(gngsa.Type))
             {
-                gngsa.NmeaMessageParsed += messageParsed;
+                gngsa.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gngsa.Type}", gngsa);
             }
 
             var gpgsa = new GpgsaMessage();
             if (!filter.ToUpper().Contains(gpgsa.Type))
             {
-                gpgsa.NmeaMessageParsed += messageParsed;
+                gpgsa.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gpgsa.Type}", gpgsa);
             }
 
             var gpgsv = new GpgsvMessage();
             if (!filter.ToUpper().Contains(gpgsv.Type))
             {
-                gpgsv.NmeaMessageParsed += messageParsed;
+                gpgsv.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gpgsv.Type}", gpgsv);
             }
 
             var glgsv = new GlgsvMessage();
             if (!filter.ToUpper().Contains(glgsv.Type))
             {
-                glgsv.NmeaMessageParsed += messageParsed;
+                glgsv.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${glgsv.Type}", glgsv);
             }
 
             var gbgsv = new GbgsvMessage();
             if (!filter.ToUpper().Contains(gbgsv.Type))
             {
-                gbgsv.NmeaMessageParsed += messageParsed;
+                gbgsv.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gbgsv.Type}", gbgsv);
             }
 
             var gnrmc = new GnrmcMessage();
             if (!filter.ToUpper().Contains(gnrmc.Type))
             {
-                gnrmc.NmeaMessageParsed += messageParsed;
+                gnrmc.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gnrmc.Type}", gnrmc);
             }
 
             var gprmc = new GprmcMessage();
             if (!filter.ToUpper().Contains(gprmc.Type))
             {
-                gprmc.NmeaMessageParsed += messageParsed;
+                gprmc.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gprmc.Type}", gprmc);
             }
 
             var gntxt = new GntxtMessage();
             if (!filter.ToUpper().Contains(gntxt.Type))
             {
-                gntxt.NmeaMessageParsed += messageParsed;
+                gntxt.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gntxt.Type}", gntxt);
             }
 
             var gnvtg = new GnvtgMessage();
             if (!filter.ToUpper().Contains(gnvtg.Type))
             {
-                gnvtg.NmeaMessageParsed += messageParsed;
+                gnvtg.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gnvtg.Type}", gnvtg);
             }
 
             var gpvtg = new GpvtgMessage();
             if (!filter.ToUpper().Contains(gpvtg.Type))
             {
-                gpvtg.NmeaMessageParsed += messageParsed;
+                gpvtg.NmeaMessageParsed += MessageParsed;
                 _parsers.Add($"${gpvtg.Type}", gpvtg);
             }
         }
 
-        private void messageParsed(object sender, NmeaMessage e)
+        private void MessageParsed(object sender, NmeaMessage e)
         {
             if (NmeaMessageParsed != null)
             {
@@ -124,10 +131,10 @@ namespace svelde.nmea.parser
 
         public void Parse(string nmeaLine)
         {
-            this.Parse(nmeaLine, "nmea", DateTime.UtcNow);
+            Parse(nmeaLine, "nmea", DateTime.UtcNow);
         }
 
-        public void Parse(string nmeaLine, string port, DateTime timestampUtc)
+        private void Parse(string nmeaLine, string port, DateTime timestampUtc)
         {
             try
             {
